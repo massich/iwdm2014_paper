@@ -1,0 +1,323 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+%\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out
+                                                          % if you need a4paper
+\documentclass[a4paper, 10pt, conference]{llncs}      % Use this line for a4
+                                                          % paper
+
+\usepackage{amsmath}
+\usepackage{epsf,graphicx,subfig}
+\setcounter{tocdepth}{3}
+\usepackage{color}
+\usepackage{lineno}
+\usepackage[nolist]{acronym}
+\usepackage{epsf,graphicx,subfig}
+\usepackage{amssymb,amsmath}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\usepackage{url}
+%\urldef{\mailsa}\path|{jmassich,joanm,|
+%\urldef{\mailsb}\path|anna.kramer, leonie.kunz, christine.reiss, nicole.sator,|
+%\urldef{\mailsc}\path|erika.siebert-cole, peter.strasser, lncs}@eia.udg.edu|    
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\keywordname\enspace\ignorespaces#1}
+
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+
+\title{\acs{sift} texture description for understanding breast ultrasound images}
+%\author{Joan Massich\inst{1}\thanks{This work was partially supported by the Spanish Science and Innovation grant nb. TIN2011-23704, the Regional Council of Burgundy and the University of Girona BR grant nb. 09/22} \and Fabrice Meriaudeau \inst{2} \and Melcior Sent{\'i}s\inst{3} \and Sergi Ganau\inst{3} \and Elsa~P{\'e}rez\inst{4} \and Robert  Mart{\'i} \inst{1} \and  Arnau Oliver\inst{1}\and Joan Mart{\'i} \inst{1}}
+%\institute{Computer Vision and Robotics Group, University of Girona, Spain. \email{jmassich@atc.udg.edu} \and
+%Laboratoire Le2i-UMR CNRS, University of Burgundy,  Le Creusot, France.
+% \and Department of
+%Breast and Gynecological Radiology,  UDIAT-Diagnostic Center, Parc
+%Taul{\'i} Corporation, Sabadell, Spain.
+% \and 
+%Department of Radiology, Hospital Josep Trueta of Girona, Spain.}
+\author{}
+
+\begin{document}
+
+\frontmatter
+\pagestyle{empty}
+
+\mainmatter  % start of an individual contribution
+
+% The following packages can be found on http:\\www.ctan.org
+%\usepackage{graphics} % for pdf, bitmapped graphics files
+%\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{times} % assumes new font selection scheme installed
+%\usepackage{amsmath} % assumes amsmath package installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+
+
+
+
+%
+
+%\institute{Computer Vision and Robotics Group, University of Girona, Spain, \email{jmassich@atc.udg.edu}, \and University of Burgundy, Le2i Laboratory CNRS UMR 5158, Esplanade Erasme, 21000, Dijon, France  \and  Dept of Radiology, Hospital Josep Trueta of Girona, Spain.}
+ %\and
+% Department of Computer Science,  University of Anonymous2, USA.
+ %{We are thankful to XYZ}
+
+
+\maketitle
+
+
+%\author{Joan Massich i Vall % <-this % stops a space
+%\thanks{This work was partially supported by the Spanish Government MEC grant nb. TIN2007-60553, the University of Girona, and  Conseil de Bourgogne.}
+%\thanks{Computer Vision and Robotics Group, University of Girona, Catalonia, Spain } \newline
+%        {\tt\small jmassich@eia.udg.edu}%
+%%%\thanks{P. Misra is with the Department of Electrical Engineering, Wright State University,
+%% %       Dayton, OH 45435, USA
+%%  %      {\tt\small pmisra@cs.wright.edu}}%
+%%%University Hospital Dr Josep Trueta
+%%%
+%%%
+%%%Department of Radiology, Hospital Josep Trueta of Girona, Catalonia, Spain 
+%}
+
+%\begin{document}
+\input{acronyms.tex}
+
+%\linenumbers
+
+%\maketitle
+%\thispagestyle{empty}
+%\pagestyle{empty}
+
+\vspace{-5pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+\ac{us} imaging is the most common adjunct image modality to assess breast cancer. In order to interpret such images, texture interpretation is of major importance. This paper proposes to use \acf{sift} descriptor as texture and provides a feasible interpretation of its behavior related to the underlying depicted tissue type. The proposal has been evaluated using a set of breast images with accompanying expert-provided \acf{gt} which describes all the tissues present within the images.
+\end{abstract}
+%
+\begin{keywords}
+breast cancer, ultrasound, texture, SIFT
+\end{keywords}
+%
+
+\graphicspath{{figures/}}
+
+\section{Introduction}
+\label{sec:introduction}
+ 
+Breast cancer is the second most common cancer (1.4 million cases per year, 10.9\% of  diagnosed cancers) after lung cancer, followed by colorectal, stomach, prostate and liver cancers. 
+In terms of mortality, breast cancer is the fifth most common cause of cancer death. However, it places as the leading cause of cancer death among females both in western countries and in economically developing countries~\cite{cancerStatistics2011}.
+
+Medical imaging plays an important role in breast cancer mortality reduction, contributing to its early detection through screening, diagnosis, image-guided biopsy, treatment follow-up and suchlike procedures~\cite{smith2003american}.
+Despite \ac{dm} still remains as the image modality of reference for diagnose purposes, \ac{us} offers useful complementary  diagnose information due to its capabilities for differentiating between solid lesions that are benign or malignant~\cite{stavros2004breast}. It is estimated that between $65\sim85\%$ of the biopsies prescribed using only mammography imaging could be avoided if \ac{us} information had been taken into account while issuing the diagnose~\cite{yuan2010multimodality}. 
+
+
+%Medical bibliography related to breast \ac{us} screening highlights the importance that texture has to identify the different structures present in the breast~\cite{stavros2004breast}. In medical bibliography, since the images are read by humans, the texture descriptions and characteristics are given at high cognitive level far from the low level descriptors needed for developing \ac{cad} systems and due to the high complexity of \ac{us} images its translation is not straight forward. 
+%The role of texture within a \ac{cad} system for breast lesions and \ac{us} data is diverse. 
+%A fully review of lesion detection, segmetnation and diagnose is found in Cheng\,\emph{et al.}~\cite{Cheng:2009p10580} where a list of texture descriptors is given.
+%The reader is referred to Cheng\,\emph{et al.}~\cite{Cheng:2009p10580} where a review of lesion detection, segmentation and diagnose is made. In the review a list of texture descriptors is given. 
+
+In \ac{us} images, texture is a major characteristic to distinguish between different breast tissues, which also allows assessing of the lesion's pathology~\cite{stavros2004breast}.  Therefore, the importance of incorporating texture data from  \ac{us} images into \ac{cad} systems. A comprehensive list of texture descriptors used for detection, segmentation or diagnose tasks applied to \ac{us} breast images is given in Cheng\,\emph{et al.}~\cite{Cheng:2009p10580}. Where most of the descriptors are ad-hock descriptors or based on well-known texture descriptors such as co-occurrence matrices, wavelet coefficients or \ac{gldm}.
+
+
+%However it is not possible to determine the advantages and disadvantages of each texture descriptor for different reasons: the tests are carried out using different data sets, the performance of the texture is shield by the overall performance of the proposed methodologies, and the goals to be solved taking advantage of texture might differ if the task is detection, segmentation or diagnose. %Besides,  there is no justification of why shall a texture be used. 
+
+In this article we propose to use \ac{sift} descriptors in order to encode the \ac{us} characteristic texture produced by the speckle noise present within the images, we evaluate its performance in annotated dataset.  
+
+\section{Material and methods}
+In order to evaluate the texture description of the observable breast tissues when using \ac{us} screening, a set of 16 \ac{us} images was acquired at the \emph{Anonymous Hospital}. Each image corresponds to a different patient, and has accompanying multi-label \ac{gt} provided by expert radiologists. Figure~\ref{fig:dataExample} illustrates a breast image from the dataset with its associated \ac{gt}. 
+
+%When present, segmentation of: lung, chest wall, ribs, pectoral muscle, fibro-glandular tissue, adipose tissue, skin layers, and lesions is provided as can be observed in figure~\ref{fig:dataExample}.
+
+\begin{figure}[Hbp]
+\centering
+\subfloat[]{\includegraphics[width=.265\textwidth]{pngImgs/000002.png}}\,
+\subfloat[]{
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (imgNode) at (0,0) {\includegraphics[width=.26\textwidth]{pngImgs/gt/000002.png}};
+
+\definecolor{lungColor}{rgb}{0.2353, 0.6078, 0.8235}
+\definecolor{chestWallColor}{rgb}{0.5294, 0.7843, 0.6078}
+\definecolor{ribColor}{rgb}{0.0000, 0.4510, 0.1961}
+\definecolor{pectoralColor}{rgb}{0.6510, 0.3490, 1.0000}
+\definecolor{fibroGlandColor}{rgb}{1.0000, 1.0000, 0.0000}
+\definecolor{fatColor}{rgb}{0.9804, 0.5882, 0.1176}
+\definecolor{skinColor}{rgb}{0.9804, 0.7255, 0.7451}
+\definecolor{unkTissueColor}{rgb}{0.6000, 0.3020, 0.2510}
+\definecolor{bgColor}{rgb}{0.0000, 0.0000, 0.0000}
+\definecolor{lesionColor}{rgb}{1.0000, 0.2510, 0.0000}
+\definecolor{boundaryColor}{rgb}{0.8784, 0.8784, 0.7529}
+
+\tikzset{nameSt/.style=
+{anchor=north west,rectangle,
+node distance=5pt,
+minimum width=8pt,minimum height=8pt,
+}}
+\begin{scriptsize}
+
+\draw[] (imgNode.north east) +(5pt,0) node[nameSt, draw=chestWallColor, fill=chestWallColor,label=right:Chest wall] (cwName) {} ;
+\draw[] node[nameSt, draw=ribColor, fill=ribColor,below=of cwName,label=right:Rib] (ribName) {} ;
+\draw[] node[nameSt, draw=skinColor, fill=skinColor,below=of ribName,label=right:Skin layers] (skinName) {} ;
+%\draw[] node[nameSt, draw=unkTissueColor, fill=unkTissueColor,below=of skinName,label=right:Chest wall] (unkTissueName) {} ;
+
+\draw[] node[nameSt, draw=lesionColor, fill=lesionColor,below=of skinName,label=right:lesion] (lesionName) {} ;
+\draw[] node[nameSt, draw=boundaryColor, fill=boundaryColor,below=of lesionName,label=right:Boundary] (boundaryName) {} ;
+
+\draw[] (imgNode.north east) +(2.2,0) node[nameSt,draw=lungColor, fill=lungColor,label=right:Air or lungs] (lungName) {};
+\draw[] node[nameSt, draw=pectoralColor, fill=pectoralColor,below=of lungName,label=right:Pectoral muscle] (pectoralName) {} ;
+\draw[] node[nameSt, draw=fibroGlandColor, fill=fibroGlandColor,below=of pectoralName,label=right:Fibro-glandular tissue] (fibroGlandName) {} ;
+\draw[] node[nameSt, draw=fatColor, fill=fatColor,below=of fibroGlandName,label=right:Adipose tissue] (fatName) {} ;
+\draw[] node[nameSt, draw=bgColor, fill=bgColor,below=of fatName,label=right:Background] (bgName) {} ;
+
+\end{scriptsize}
+
+%\draw[] node[nameSt,draw=Gcolor, fill=Gcolor, below=of FAname,label=right:Ganglion] (Gname) {}; 
+%\draw[] node[nameSt,draw=Hcolor, fill=Hcolor, below=of Gname,label=right:Harmatoma] (Hname) {}; 
+%\draw[] node[nameSt,draw=CDIcolor, fill=CDIcolor, below=of Hname,label=right:Ductal Infiltrating Carcinoma] (CDIname) {}; 
+%\draw[] node[nameSt,draw=CIDcolor, fill=CIDcolor, below=of CDIname,label=right:Intra-Ductal Carcinoma] (CIDname) {}; 
+%\draw[] node[nameSt,draw=CLIcolor, fill=CLIcolor, below=of CIDname,label=right:Infiltrating Lobular Carcinoma] (CLIname) {}; 
+%\draw[] node[nameSt,draw=Othercolor, fill=Othercolor, below=of CLIname,label=right:Other Pathologies] (Othername) {}; 
+\end{tikzpicture}
+}
+
+\caption{Dataset sample. (a) Original \ac{us} image. (b) Associated \ac{gt}.}
+\label{fig:dataExample}
+\end{figure}
+
+\section{Using \ac{sift} in order to describe different tissues present in breast \acs{us} images}
+%\section{Low level texture description of the breast tissue using \ac{sift} }
+\acf{sift}~\cite{lowe2004distinctive} transforms key-points into scale and rotation invariant coordinates relative to local features in order to sample the magnitude and orientation of the gradients surrounding the key-point for generating a 128 element feature. In order to generate a texture descriptor out of \ac{sift} descriptors, a regular grid is used to generate evenly sparse \ac{sift} descriptors. At the finest resolution every single pixel of an image can be used as a key-point to extract a \ac{sift} descriptor out of every possible position.
+
+The usage of \ac{sift} descriptor brings invariability to scale, rotation and minor affine transformations along with robustness to illumination changes~\cite{lowe2004distinctive}, which allows to differentiate the tissues despite the variability from \ac{us} adquisition.
+
+% Dense \ac{sift} uses every pixel in the image as a key-point in order to map the whole image in this space. Initially, scale and orientation of the key-points are determined. The image gradient's magnitude and orientation are then sampled according to the determined scale and orientation to generate a 128 element feature mapping each point in this hyperspace. 
+
+
+The resulting space from using all the pixels as a key-point is described in figures~\ref{fig:siftMapping}, \ref{fig:siftGT} and \ref{fig:siftImg}. For displaying purposes and easier manipulation, these figures show the two dimensional representation of the \ac{sift} hyperspace obtained by projecting the 128 dimensions  of the \ac{sift} descriptors into a two dimensional space using \ac{pca}.
+Figure~\ref{fig:siftMapping}a shows this projection of the \ac{sift} space into a two dimensional space. 
+%In the figure, each sample has been colored accordingly to its \ac{gt} label. 
+In figure~\ref{fig:siftMapping}b the projected space is discretized and an occurrence study is displayed showing the distribution of the \ac{sift} descriptors present within the images. 
+%Figure~\ref{fig:siftGT} repeats the occurrence study, this time for every individual class. 
+Figure~\ref{fig:siftGT} shows the occurrence study for every class, where every different tissue type is represent by different \ac{sift} descriptors. 
+%The figure shows that different tissue types are represented by different \ac{sift} descriptors.
+Figure~\ref{fig:siftImg} qualitatively assess the description of an \ac{us} image using \ac{sift}. In fig.\,\ref{fig:siftImg}a the projected map has been arbitrarily colored, in such a manner that close projected \ac{sift} descriptors share a similar color. This coloring associated to each \ac{sift} descriptor is further used to remap the \ac{sift} descriptors extracted from the original image (see fig.\,\ref{fig:siftImg}b,c).
+
+\begin{figure}[Htbp]
+\centering
+%\subfloat[]{\includegraphics[trim=115 250 118 250,clip,width=.3\textwidth]{siftColorMap}}\,
+%\subfloat[]{\includegraphics[width=.24\textwidth,angle = 90]{siftOccurrences}}\,
+\subfloat[]{\includegraphics[trim=115 250 118 250,clip,width=.3\textwidth]{mapGTintoSIFT}}\quad
+\subfloat[]{\includegraphics[width=.24\textwidth,]{siftOccurrences2}}
+
+%\caption{2D visualization of the \acs{sift} hyper space. (a) Arbitrary color coding of the projected space. (b) Occurrence density. (c) Projected space colored according to \acs{gt} tissue labeling.}
+\caption{2D visualization of the \acs{sift} hyper space. (a) Projected space colored according to \acs{gt} tissue labeling. (b) Occurrence density.}
+\label{fig:siftMapping}
+\end{figure}
+
+%Figure~\ref{fig:siftMapping}a show this projection and all the elements have been arbitrarily coded with contiguous colors, so that similar descriptors share a similar color. This coloring is further used in this study to interpret \ac{sift} images (see fig.\,\ref{fig:siftImg}). Figure~\ref{fig:siftMapping}b discretize the projected space and performs an occurrence study. Figure~\ref{fig:siftMapping}c represents the same projection however in this case the coloring is subject to the label associated to each sample. Further study of how the \ac{sift} descriptors are distributed depending on the tissue is presented in figure~\ref{fig:siftGT}. 
+
+
+
+\begin{figure}[Htbp]
+\centering
+\subfloat[Air or lungs]{\includegraphics[width=.24\textwidth,angle = 90]{gtDistro/001.png}}\,
+\subfloat[Chest wall]{\includegraphics[width=.24\textwidth,angle = 90]{gtDistro/002.png}}\,
+%\subfloat[]{\includegraphics[width=.2\textwidth,angle = 90]{gtDistro/003.png}}\,
+%\subfloat[]{\includegraphics[width=.2\textwidth,angle = 90]{gtDistro/004.png}}\\
+\subfloat[{\footnotesize Fibro-glandular}]{\includegraphics[width=.24\textwidth,angle = 90]{gtDistro/005.png}}\,
+%\subfloat[]{\includegraphics[width=.2\textwidth,angle = 90]{gtDistro/006.png}}\,
+%\subfloat[]{\includegraphics[width=.2\textwidth,angle = 90]{gtDistro/007.png}}\,
+\subfloat[Lesion]{\includegraphics[width=.24\textwidth,angle = 90]{gtDistro/128.png}}
+\caption{Distribution of the \acs{sift} descriptors for some of the tissue type.}%. The background color codes the tissue type.}
+\label{fig:siftGT}
+\end{figure}
+
+%Both, figure~\ref{fig:siftMapping} and \ref{fig:siftGT} qualitatively assess how 
+%Figure~\ref{fig:siftImg} qualitatively assess the description of an \ac{us} image using \ac{sift}. In fig.\,\ref{fig:siftImg}a the projected map has been arbitrarily colored, in such a manner that close projected \ac{sift} descriptors share a similar color. This coloring associated to each \ac{sift} descriptor is further used to remap the \ac{sift} descriptors extracted from the original image (see fig.\,\ref{fig:siftImg}b,c).
+
+% two \ac{sift} images by reprojecting the coloring from fig.\,\ref{fig:siftMapping}a to the \ac{sift} descriptors obtained from the example images.
+
+\begin{figure}[Htbp]
+\centering
+\subfloat[]{\includegraphics[trim=115 250 118 250,clip,width=.3\textwidth]{siftColorMap}}~
+%\subfloat[]{\includegraphics[height=.24\textwidth]{pngImgs/000022.png}}\,
+%\subfloat[]{\includegraphics[height=.24\textwidth]{siftImages/000022.png}}\,
+\subfloat[]{\includegraphics[height=.24\textwidth]{pngImgs/000014.png}}\,
+\subfloat[]{\includegraphics[height=.24\textwidth]{siftImages/000014.png}}
+\caption{Low level \ac{sift} descriptor example. (a) Arbitrary coloring of the projected \acs{sift} space. (b) Original image. (c) Recoding of the extracted \ac{sift} descriptors using the color coding in (a). }
+\label{fig:siftImg}
+\end{figure}
+
+%\section{\acf{bof} construction from the \ac{sift} descriptors}
+Texture is an area property related to spatial repetition of structures, similar statistical properties of the area or both. A technique to embed statistical properties of a low level descriptor is \ac{bof} which analyses the occurrence of a set of keywords (or key-points) within a particular region~\cite{csurka2004visual}. 
+
+In this proposal, the words or features representing the images are \ac{sift} descriptors. In order to generate the dictionary that generates the \ac{bof} descriptor, the space of \ac{sift} descriptors is clustered in order to produce a hard quantification of this space. In this case, a k-means procedure with $k=36$ is used to generate the dictionary. To generate the \ac{bof}-\ac{sift} feature, all the \ac{sift} descriptors are substituted for the closest \ac{sift} descriptor in the dictionary. Finally the texture description from a particular area is expressed as the keywords' occurrence in this area. The descriptor is normalized so that the sum of all the occurrences is 1. 
+Figure~\ref{fig:bow} illustrates the \ac{bof}-\ac{sift} feature for some example areas. %In the figure there is a dictionary example 
+
+%The keywords are a hard quantification of the feature space as it can be seen in figure~\ref{fig:dictionary}. Although any quantification procedure can be used, in out case a set of 36 keywords from a k-means clustering process is used (see fig.~\ref{fig:dictionary}c). Once the set of keywords determined, all the features are associated to their nearest keyword as can be observed in fig.\,\ref{fig:dictionary}. Finally the texture description from a particular area is expressed as the keywords' occurrence in this area. This process is illustrated in figure~\ref{fig:bow}.
+
+%\begin{figure}[Htbp]
+%\centering
+%\subfloat[]{\includegraphics[trim=115 250 118 250,clip,width=.3\textwidth]{siftColorMap}}\,
+%\subfloat[]{\includegraphics[trim=115 250 118 250,clip,width=.3\textwidth]{siftColorMap}}\,
+%\subfloat[]{\includegraphics[trim=115 250 118 250,clip,width=.3\textwidth]{siftColorMap}}
+%\caption{Feature space hard quantification in order to generate the set of keywords. (a) Regular sampling. (b) Aleatory sampling. (b) Clustering.{\color{red} Here should be this image but instead of smoothly change the color it should be piecewise constant (due to the quantification) first sould be like a grid and the last two like a mosaic of irregular pieces.}}
+%\label{fig:dictionary}
+%\end{figure}
+
+\begin{figure}[Htbp]
+\centering
+% \includegraphics[trim = 91 300 100 242, clip,width=.5\textwidth]{appearance1.pdf}\\
+%  \subfloat[]{\includegraphics[width=.10\textwidth,]{fakeDict.png}}\,
+% \subfloat[]{\includegraphics[width=.10\textwidth,]{BoF/desc01.png}}\,
+% \subfloat[]{\includegraphics[width=.10\textwidth,]{BoF/desc02.png}}\,
+%  \subfloat[]{\includegraphics[width=.10\textwidth,]{BoF/desc04.png}}\,
+%   \subfloat[]{\includegraphics[width=.10\textwidth,]{BoF/desc05.png}}\,
+%  \subfloat[]{\includegraphics[width=.10\textwidth,]{BoF/desc03.png}}
+  
+ \begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (imgNode) at (0,0) {\includegraphics[trim = 91 300 100 242, clip,width=.635\textwidth]{appearance1.pdf}};
+
+\tikzset{nameSt/.style=
+{anchor=north west,rectangle,
+node distance=10pt,
+minimum width=8pt,minimum height=8pt,
+inner sep=0,
+}}
+\begin{tiny}
+
+\draw[] (imgNode.north east) +(5pt,0) node[nameSt, label=below:Dictionary] (dictionary) {\includegraphics[width=.10\textwidth,]{fakeDict.png}} ;
+\draw[] (dictionary.north east) +(5pt,0) node[nameSt, label=below:(1)] (BoFi) {\includegraphics[width=.10\textwidth,]{BoF/desc01.png}} ;
+\draw[] (BoFi.north east) +(5pt,0) node[nameSt, label=below:(2)] (BoFii) {\includegraphics[width=.10\textwidth,]{BoF/desc02.png}} ;
+
+\node[nameSt, below=of dictionary, label=below:(3)] (BoFiii) {\includegraphics[width=.10\textwidth,]{BoF/desc03.png}} ;
+\node[nameSt, below=of BoFi, label=below:(4)] (BoFiv) {\includegraphics[width=.10\textwidth,]{BoF/desc04.png}} ;
+\node[nameSt, below=of BoFii, label=below:(5)] (BoFv) {\includegraphics[width=.10\textwidth,]{BoF/desc05.png}} ;
+
+\node[nameSt, below=of BoFiii, label=below:(6)] (BoFvi) {\includegraphics[width=.10\textwidth,]{BoF/desc06.png}} ;
+\node[nameSt, below=of BoFiv, label=below:(7)] (BoFvii) {\includegraphics[width=.10\textwidth,]{BoF/desc07.png}} ;
+\node[nameSt, below=of BoFv, label=below:(8)] (BoFviii) {\includegraphics[width=.10\textwidth,]{BoF/desc08.png}} ;
+
+\end{tiny}
+
+\end{tikzpicture}
+ 
+%\caption{\acs{sift}-\acs{bof} descriptors qualitative analysis. (a) image example. (b) \acs{bof} descriptor building from \ac{sift} descriptors in fig.\,\ref{fig:dictionary}c. (c-f) region descriptor occurrence.{\color{red} this is a fake and the image can be redone to take less space}}
+\caption{\acs{sift}-\acs{bof} descriptors qualitative analysis. (Left) image example. (Right) Dictionary representation colored using the location of the keypoint location in fig.\,\ref{fig:siftMapping}a space. (1-8) Occurrence of the dictionary's key-points associated to each region highlighted in the original image.}
+\label{fig:bow}
+\end{figure}
+
+
+\section{Quantitative experiment}
+In order to assess the usage of \ac{sift} texture, the images are divided into superpixels, features are extracted to describe the superpixels and supervised \ac{ml} procedure using \ac{svm} is used to infer the labeling of the superpixel. Incorporating \ac{bof} of \ac{sift} descriptors in order to describe the superpixels improve the results of the labeling process for our preliminary experiments, however a more thorough study will be included in the final version of the document.
+
+
+\newpage
+%\bibliographystyle{splncs}
+\bibliographystyle{plain}
+\bibliography{bibliografiaNew}
+
+\end{document}
+
