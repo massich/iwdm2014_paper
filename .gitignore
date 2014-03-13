@@ -1,0 +1,6 @@
+# Ignore all the latex generated files
+*.aux
+*.synctex.gz
+*.log
+*.bbl
+
