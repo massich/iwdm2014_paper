@@ -31,7 +31,7 @@
 % on the last page of the document
 
 \title{\acs{sift} texture description for understanding breast ultrasound images}
-\author{Joan Massich\inst{1}\inst{2}\thanks{This work was partially supported by the Spanish Science and Innovation grant nb. TIN2012-37171-C02-01 and TTIN2012-37171-C02-02, the Regional Council of Burgundy and the University of Girona BR grant nb. 09/22} \and Fabrice Meriaudeau \inst{2} \and Melcior Sent{\'i}s\inst{3} \and Sergi Ganau\inst{3} \and Elsa~P{\'e}rez\inst{4} 
+\author{Joan Massich\inst{1}\inst{2}\thanks{This work was partially supported by the Spanish Science and Innovation grant nb. TIN2012-37171-C02-01 and TTIN2012-37171-C02-02 and the Regional Council of Burgundy.} \and Fabrice Meriaudeau \inst{2} \and Melcior Sent{\'i}s\inst{3} \and Sergi Ganau\inst{3} \and Elsa~P{\'e}rez\inst{4} 
 \and Dom{\`e}nec Puig\inst{5} \and Robert  Mart{\'i} \inst{1} \and  Arnau Oliver\inst{1}\and Joan Mart{\'i} \inst{1}}
 \institute{Computer Vision and Robotics Group, University of Girona, Spain. \email{jmassich@atc.udg.edu} \and
 Laboratoire Le2i-UMR CNRS, University of Burgundy,  Le Creusot, France.
@@ -98,9 +98,13 @@ Department of Computer Engineering and Mathematics, Rovira i Virgili University,
 \vspace{-5pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-\ac{us} imaging is the most common adjunct image modality to assess breast cancer. In order to interpret such images, texture interpretation is of major importance. This paper proposes to use \acf{sift} descriptor as texture and provides a feasible interpretation of its behavior related to the underlying depicted tissue type. The proposal has been evaluated using a set of breast images with accompanying expert-provided \acf{gt} which describes all the tissues present within the images.
+%\ac{us} imaging is the most common adjunct image modality to assess breast cancer. In order to interpret such images, texture interpretation is of major importance. This paper proposes to use \acf{sift} descriptor as texture and provides a feasible interpretation of its behavior related to the underlying depicted tissue type. The proposal has been evaluated using a set of breast images with accompanying expert-provided \acf{gt} which describes all the tissues present within the images.
 
+%Texture is a powerful cue for describing structures that show a high degree of similarity in their image intensity patterns. This paper describes the use of Self-Invariant Feature Transform (SIFT) as a low-level texture descriptor in order to differentiate the tissues present in breast US images. Based on this SIFT-like feature descriptor, a Bag-of-Features (BoF) descriptor analyses the occurrence of a set of keypoints within a particular region, which leds to the proposed tissue labelling. Experimental results are provided showing the validity of the proposed approach for describing the tissues in breast US images.
 
+Texture is a powerful cue for describing structures that show a high degree of similarity in their image intensity patterns. This paper describes the use of \acf{sift}, both as low-level and high-level descriptors, applied to differentiate the tissues present in breast US images. For the low-level texture descriptors case, \ac{sift} descriptors are extracted from a regular grid. The high-level texture descriptor are build as a \ac{bof} of \ac{sift} descriptors. 
+Experimental results are provided showing the validity of the proposed approach for describing the tissues in breast US images.
+ 
 \end{abstract}
 %
 \begin{keywords}
@@ -109,6 +113,7 @@ breast cancer, ultrasound, texture, SIFT
 %
 
 \graphicspath{{figures/}}
+\acresetall
 
 \section{Introduction}
 \label{sec:introduction}
@@ -130,7 +135,7 @@ In \ac{us} images, texture is a major characteristic to distinguish between diff
 
 %However it is not possible to determine the advantages and disadvantages of each texture descriptor for different reasons: the tests are carried out using different data sets, the performance of the texture is shield by the overall performance of the proposed methodologies, and the goals to be solved taking advantage of texture might differ if the task is detection, segmentation or diagnose. %Besides,  there is no justification of why shall a texture be used. 
 
-In this article explore the usage of \ac{sift} descriptors for encoding the \ac{us} characteristic texture produced by the speckle noise present within the images, we evaluate its performance in annotated dataset.  
+This article explores the usage of \ac{sift} descriptors for encoding the \ac{us} characteristic texture produced by the speckle noise present within the images. Its performance is evaluated using a multi-label annotated dataset.  
 
 \section{Material and methods}
 In order to develop segmentation methodologies applied to delineate breast lesions in \ac{us} data, a set of 700 \ac{us} images was acquired at the \emph{UDIAT Diagnostic Centre of Parc Taul\'{i}} in Sabadell (Catalunya), between 2010 and 2012. All with accompanying \ac{gt} delineation of the lesions present in the image. From this image database, a reduced dataset of 16 images corresponding to different patients was selected and complemented with multi-label \ac{gt} in order to evaluate the texture description of the observable tissues in the breast.
@@ -201,15 +206,20 @@ minimum width=8pt,minimum height=8pt,
 
 \section{Using \ac{sift} as a low-level texture descriptor in order to differentiate the tissues present in breast \acs{us} images}
 %\section{Low level texture description of the breast tissue using \ac{sift} }
-\acf{sift}~\cite{lowe2004distinctive} transforms key-points into scale and rotation invariant coordinates relative to local features by sampling the magnitude and orientation of the gradients surrounding the key-point to generating a 128 element feature. In order to generate a texture descriptor out of \ac{sift} descriptors, a regular grid is used to generate evenly sparse \ac{sift} descriptors. At the finest resolution every single pixel of an image can be used as a key-point to extract a \ac{sift} descriptor out of every possible position.
+\acf{sift}~\cite{lowe2004distinctive} transforms key-points into scale and rotation invariant coordinates relative to local features. The \ac{sift} descriptor at a particular key-point, samples the magnitude and orientation of the gradients surrounding this key-point to generate a 128 element feature. When setting up \ac{sift} as a texture descriptor, the key-points are considered to be a regular grid in order to generate evenly sparse \ac{sift} descriptors.
+
+%generate a texture descriptor out of \ac{sift} descriptors, a regular grid is used to generate evenly sparse \ac{sift} descriptors. At the finest resolution every single pixel of an image can be used as a key-point to extract a \ac{sift} descriptor out of every possible position.
 
 The usage of \ac{sift} descriptor brings invariability to scale, rotation and minor affine transformations along with robustness to illumination changes~\cite{lowe2004distinctive}, which allows to differentiate the tissues despite the variability from \ac{us} adquisition.
 
 % Dense \ac{sift} uses every pixel in the image as a key-point in order to map the whole image in this space. Initially, scale and orientation of the key-points are determined. The image gradient's magnitude and orientation are then sampled according to the determined scale and orientation to generate a 128 element feature mapping each point in this hyperspace. 
 
 
-Figures~\ref{fig:siftMapping} to~\ref{fig:mapQuantitativeResults} are used to analyze both qualitatively and quantitatively the usage of \ac{sift} as a low-level descriptor to encode \ac{us} texture. In order to study the image in terms of \ac{sift} descriptors the images are mapped to this \ac{sift} space by extracting a \ac{sift} descriptor at every pixel position. In order to visually keep track of this \ac{sift}, their 128 dimensions are projected into a two dimensional spce using \ac{pca}. When combining features using \ac{pca} is convenient to know the amount of data variability captured in the new projected space. For the current experiment, the projected space describes $21,6\%$ of the data variability present in the original space. 
-Figure~\ref{fig:siftImg} offers a visual interpretation of a breast \ac{us} image in terms of low-level \ac{sift} descriptors. On it, fig.\,\ref{fig:siftImg}a shows the scatter plot resulting from projecting all the images within the dataset, at the \ac{sift} space and further project them at the space described by their two principal components. In this projected space, every sample has been arbitrary colored in such a manner that two close samples share similar color. In such manner, this arbitrary coloring can be used to color code the \ac{sift} descriptors and visually asses the images in terms of \ac{sift} (see fig.\,\ref{fig:siftImg}c).
+Figures~\ref{fig:siftMapping} to~\ref{fig:quantitativeComparison} are used to analyze both qualitatively and quantitatively the usage of \ac{sift} as a low-level descriptor to encode \ac{us} texture. In order to study the image in terms of \ac{sift} descriptors the images are mapped to this \ac{sift} space by extracting a \ac{sift} descriptor at every pixel position. In order to visually keep track of this \ac{sift}, their 128 dimensions are projected into a two dimensional spce using \ac{pca}. When combining features using \ac{pca} is convenient to know the amount of data variability captured in the new projected space. For the current experiment, the projected space describes $21,6\%$ of the data variability present in the original space. 
+Figure~\ref{fig:siftImg} offers a visual interpretation of a breast \ac{us} image in terms of low-level \ac{sift} descriptors. On it, fig.\,\ref{fig:siftImg}a shows the scatter plot resulting from projecting all the \ac{sift} descriptors extracted from all the images within the dataset to the space described by their two principal components.
+The descriptors, once projected to this two dimensional space, have 
+%all the images within the dataset, at the \ac{sift} space and further project them at the space described by their two principal components. In this projected space, every sample has 
+been arbitrary colored in such a manner that two close samples share similar color. In this manner, this arbitrary coloring can be used to color code the \ac{sift} descriptors and visually asses the images in terms of \ac{sift} (see fig.\,\ref{fig:siftImg}c).
 
 \begin{figure}[Htbp]
 \centering
@@ -222,16 +232,16 @@ Figure~\ref{fig:siftImg} offers a visual interpretation of a breast \ac{us} imag
 \label{fig:siftImg}
 \end{figure}
 
-In order to analyze the tissue distribution in this texture space of \ac{sift} descriptors, the analysis of the \ac{map} estimator has been chosen. The model is presented in equation~\ref{eq:bayes} and figures~\ref{fig:siftMapping} to~\ref{xxx} visually interprets its terms.
+In order to analyze the tissue distribution in this texture space of \ac{sift} descriptors, the analysis of the \ac{map} estimator has been chosen. The model is presented in equation~\ref{eq:bayes} and figures~\ref{fig:siftMapping} to~\ref{fig:sift_and_ingensity_MAP} visually interprets its terms.
 
 \begin{equation}
 P(\omega|\bar{x}_a) = \frac{P(\bar{x}_a|\omega)\cdot P(\omega)}{P(\bar{x}_a)}
 \label{eq:bayes}
 \end{equation}
 
-Where $P(\omega|\bar{x}_a)$ is the probability that the sample $a$ belongs to class $\omega \in W$ (see fig.\,\ref{fig:dataExample}b for all the possible classes) based on its position in the projected space. $P(\bar{x}_a|\omega)$ corresponds to the \ac{ml} of the feature distribution for a particular class $\omega$ and, $P(\omega)$ and $P(\bar{x}_a)$ are the priors for the class and feature respectively.
+Where $P(\omega|\bar{x}_a)$ is the probability that the sample $a$ belongs to class $\omega \in W$ (see fig.\,\ref{fig:dataExample}b as a reminder of the \ac{gt} classes available) based on $\bar{x}_a$ which is the feature vector representing the sample $a$, such that $x_a^i$ is the $i$th feature. $P(\bar{x}_a|\omega)$ corresponds to the \ac{ml} of the feature distribution for a particular class $\omega$ and, $P(\omega)$ and $P(\bar{x}_a)$ are the priors for the class and feature respectively.
 
-Figure~\ref{fig:siftMapping} uses the entire dataset to illustrate the underlying problem and the priors extracted from the same dataset. Fig.\,\ref{fig:siftMapping}a shows a scatter plot where every sample has been colored according to its \ac{gt}. Fig.\,\ref{fig:siftMapping}b shows an occurrence study of the samples carried out in a discretization of the space in fig.\,\ref{fig:siftMapping}a that illustrates the distribution of the \ac{sift} descriptors present within the images, which corresponds to the $P(\bar{x}_a)$ term in eq.\,\ref{eq:bayes}. Fig.\,\ref{fig:siftMapping}c illustrates the class prior corresponding to the proportion of samples present in the dataset for each class.
+Figure~\ref{fig:siftMapping}\todo{alin the figures in fig. \ref{fig:siftMapping}} uses the entire dataset to illustrate the underlying problem and the priors extracted from the same dataset. Fig.\,\ref{fig:siftMapping}a shows a scatter plot where every sample has been colored according to its \ac{gt}. Fig.\,\ref{fig:siftMapping}b shows an occurrence study of the samples carried out in a discretization of the space in fig.\,\ref{fig:siftMapping}a that illustrates the distribution of the \ac{sift} descriptors present within the images, which corresponds to the $P(\bar{x}_a)$ term in eq.\,\ref{eq:bayes}. Fig.\,\ref{fig:siftMapping}c illustrates the class prior corresponding to the proportion of samples present in the dataset for each class.
 
 \begin{figure}[Htbp]
 \centering
@@ -246,8 +256,7 @@ Figure~\ref{fig:siftMapping} uses the entire dataset to illustrate the underlyin
 \label{fig:siftMapping}
 \end{figure}
 
-Figure~\ref{fig:P_class_knowing_features} shows the occurrence study for every class, corresponding to the $P(\bar{x}_a|\omega)$ in eq.\,\ref{eq:bayes} where every different tissue type is represent by different \ac{sift} descriptors. \todo[inline]{fa falta una comparacio dels models que son similars referince a l´ image de la figura 1 per illustrar que el background normalment correspon a zones que ja no es visualitza res, que ja no s entenen i que per tant son molt similars a aire, o diferencies entre greix i fibroglandular, etc... En definitiva l overlap de les classes}
-
+Figure~\ref{fig:P_class_knowing_features} shows the feature distribution study for every class, corresponding to the $P(\bar{x}_a|\omega)$ in eq.\,\ref{eq:bayes}. On it, tendencies of features for representing different classes can be observed illustrating the similarities and dissimilarities between classes. As example the reader is referred to fig.~\ref{fig:dataExample} to illustrate that the background label used for structures that are not clear in the image has huge overlap with the lungs. Or, the fact that adipose tissue class contains Cooper's ligaments which are highly dense fibers, and figbro-glandular tissue is made of dense fibers and unstructured fat.
 
 \begin{figure}[Htbp]
 \centering
@@ -260,17 +269,17 @@ minimum width=8pt,minimum height=8pt,
 inner sep=0,
 }}
 
-\node[myNode, label=below:Background] (bgNode) at (0,0) {\includegraphics[width=.3\textwidth]{gtDistro/000.png}};
-\node[myNode, right=of bgNode, label=below:Air or lungs] (airNode) {\includegraphics[width=.3\textwidth]{gtDistro/001.png}};
-\node[myNode, right=of airNode, label=below:Chest wall] (cwNode) {\includegraphics[width=.3\textwidth]{gtDistro/002.png}};
+\node[myNode, label=below:Background] (bgNode) at (0,0) {\includegraphics[width=.25\textwidth]{gtDistro/000.png}};
+\node[myNode, right=of bgNode, label=below:Air or lungs] (airNode) {\includegraphics[width=.25\textwidth]{gtDistro/001.png}};
+\node[myNode, right=of airNode, label=below:Chest wall] (cwNode) {\includegraphics[width=.25\textwidth]{gtDistro/002.png}};
 
-\node[myNode, below=15pt of bgNode, label=below:Rib] (ribNode) {\includegraphics[width=.3\textwidth]{gtDistro/003.png}};
-\node[myNode, right=of ribNode, label=below:Pectoral muscle] (pecNode) {\includegraphics[width=.3\textwidth]{gtDistro/004.png}};
-\node[myNode, right=of pecNode, label=below:Fibro-glandular] (fibNode) {\includegraphics[width=.3\textwidth]{gtDistro/005.png}};
+\node[myNode, below=15pt of bgNode, label=below:Rib] (ribNode) {\includegraphics[width=.25\textwidth]{gtDistro/003.png}};
+\node[myNode, right=of ribNode, label=below:Pectoral muscle] (pecNode) {\includegraphics[width=.25\textwidth]{gtDistro/004.png}};
+\node[myNode, right=of pecNode, label=below:Fibro-glandular] (fibNode) {\includegraphics[width=.25\textwidth]{gtDistro/005.png}};
 
-\node[myNode, below=15pt of ribNode, label=below:Adipose tissue] (fatNode) {\includegraphics[width=.3\textwidth]{gtDistro/006.png}};
-\node[myNode, right=of fatNode, label=below:Skin layers] (skNode) {\includegraphics[width=.3\textwidth]{gtDistro/007.png}};
-\node[myNode, right=of skNode, label=below:Lesion] (lesionNode) {\includegraphics[width=.3\textwidth]{gtDistro/128.png}};
+\node[myNode, below=15pt of ribNode, label=below:Adipose tissue] (fatNode) {\includegraphics[width=.25\textwidth]{gtDistro/006.png}};
+\node[myNode, right=of fatNode, label=below:Skin layers] (skNode) {\includegraphics[width=.25\textwidth]{gtDistro/007.png}};
+\node[myNode, right=of skNode, label=below:Lesion] (lesionNode) {\includegraphics[width=.25\textwidth]{gtDistro/128.png}};
 
 \end{tikzpicture} \\
 %\subfloat[]{\includegraphics[width=.3\textwidth]{gtDistro/003.png}}\,
@@ -290,17 +299,27 @@ inner sep=0,
 \label{fig:P_class_knowing_features}
 \end{figure}
 
-Using eq.\,\ref{eq:bayes} a \ac{map} estimation the probability for each class can be calculated at every position based on the data shown in fig.\,\ref{fig:siftMapping} and fig.\,\ref{fig:P_class_knowing_features}. Figure~\ref{fig:mapQualitativeResults}a colors the space based on the most probable class. As it can be observed, the coloring of the space is mostly congruent indicating that each tissue is grouped within the \ac{sift} which facilitates class separability. This coloring of the space can be used as a Bayesian classification of the sample. Figure~\ref{fig:mapQualitativeResults}c \todo{falta la imatge}  shows the result of this classification from an unseen image (see fig.\,\ref{fig:mapQualitativeResults}b). Since no multi-label \ac{gt} is present for this image only qualitative assessment of the results can be made. 
-\todo[inline]{In order to improve the results, MRF can be used to ensure spatial coherence for the labeling. Also instead of only using the map, the reward obtained from the other classes can also be taken into account. similar classes are easily mislabeled ej: background and lungs, fibro-glandular and fat}
+Using eq.\,\ref{eq:bayes} a \ac{map} estimation of the probability for each class can be calculated at every position based on the data shown in fig.\,\ref{fig:siftMapping} and fig.\,\ref{fig:P_class_knowing_features}.
+Equation~\ref{eq:labeling} illustrates produce the preferred labeling of the space which is illustrated in figure~\ref{fig:sift_and_ingensity_MAP}a. On it, the marginals $P(\omega_i|x^j)$ where $j\in \{1,2\}$ are also represented to obtain a deeper understanding of the \ac{map}.
 
-\begin{figure}[Htbp]
-\centering
-\subfloat[]{\includegraphics[width=.24\textwidth]{gtDistro/mapLabeling.png}}\,
-\subfloat[]{\includegraphics[width=.265\textwidth]{pngImgs/000011.png}}\,
-\subfloat[]{\includegraphics[width=.265\textwidth]{/home/sik/Work/escola/recerca/iwdm2014/code/gtPredictedLabel/000011.png}}
-\caption{ Qualitative results. (a) \ac{map} class label distribution of the 2D projection of the \ac{sift} descriptors. (b) unseen image (c) image labeling results}
-\label{fig:mapQualitativeResults}
-\end{figure}
+\begin{equation}
+labeling(\bar{x}) = \quad\underset{i}{\arg\max}\quad P(\omega_i|\bar{x})
+\label{eq:labeling} \qquad \text{where } i \in [1 .. |W|] 
+\end{equation}
+
+For comparison purposes, figure~\ref{fig:sift_and_ingensity_MAP} is complemented by repeating the experiment carried out in fig.figure~\ref{fig:sift_and_ingensity_MAP}a, this time using intensity as single feature such that $x_a \in [0 .. 255]$ (see fig.~\ref{fig:sift_and_ingensity_MAP}b). When comparing both labeled spaces, the \ac{sift} feature is preferred since exist no mode for some of the classes when using intensity.
+
+% Figure~\ref{fig:mapQualitativeResults}a colors the space based on the most probable class. As it can be observed, the coloring of the space is mostly congruent indicating that each tissue is grouped within the \ac{sift} which facilitates class separability. This coloring of the space can be used as a Bayesian classification of the sample. Figure~\ref{fig:mapQualitativeResults}c \todo{falta la imatge}  shows the result of this classification from an unseen image (see fig.\,\ref{fig:mapQualitativeResults}b). Since no multi-label \ac{gt} is present for this image only qualitative assessment of the results can be made. 
+%\todo[inline]{In order to improve the results, MRF can be used to ensure spatial coherence for the labeling. Also instead of only using the map, the reward obtained from the other classes can also be taken into account. similar classes are easily mislabeled ej: background and lungs, fibro-glandular and fat}
+
+%\begin{figure}[Htbp]
+%\centering
+%\subfloat[]{\includegraphics[width=.24\textwidth]{gtDistro/mapLabeling.png}}\,
+%\subfloat[]{\includegraphics[width=.265\textwidth]{pngImgs/000011.png}}\,
+%\subfloat[]{\includegraphics[width=.265\textwidth]{/home/sik/Work/escola/recerca/iwdm2014/code/gtPredictedLabel/000011.png}}
+%\caption{ Qualitative results. (a) \ac{map} class label distribution of the 2D projection of the \ac{sift} descriptors. (b) unseen image (c) image labeling results}
+%\label{fig:mapQualitativeResults}
+%\end{figure}
 
 \begin{figure}[Htbp]
 \centering
@@ -309,18 +328,18 @@ Using eq.\,\ref{eq:bayes} a \ac{map} estimation the probability for each class c
 \subfloat[]{\includegraphics[trim = 91 250 100 242, clip,width=.4\textwidth]{/home/sik/Work/escola/recerca/iwdm2014/code/sift1map.pdf}}\,
 \subfloat[]{\includegraphics[trim = 91 250 100 242, clip,width=.4\textwidth]{/home/sik/Work/escola/recerca/iwdm2014/code/sift2map.pdf}}
 \caption{ Qualitative evaluation of the \ac{map} labeling of the feature space. (a) SIFT (b) Intensity}
-\label{fig:mapQualitativeResults2}
+\label{fig:sift_and_ingensity_MAP}
 \end{figure}
 
 \subsection{Quantitative assessing}
-In order to generate quantitative results using cross-validation, 5 folds have been generated by sampling extracting 10.000 samples for each class from the dataset. At each round 4 folds have been used for training the \ac{ml} term in eq.\,\ref{eq:bayes} ($P(\bar{x}_a|\omega)$) and the classification has been tested using the remaining fold.
+In order to generate cross-validated quantitative results, it has been sampled from the dataset, 5 folds of 10.000 samples for each class per fold. At each round 4 folds have been used for training the \ac{ml} term in eq.\,\ref{eq:bayes} ($P(\bar{x}_a|\omega)$) and the ramaining fold has been used for testing the classification. Figure~\ref{fig:quantitativeComparison} uses boxplots to illustrate the distribution of the confusion matrix across the folds. In the figure, the samples are grouped by the actual class of the sample and divided by the predicted classes. The top label represents the samples' actual class, whereas the predicted class is color coded at the bottom. Boxplots in blue represent the results of classifying the samples using intensity, whereas the bloxpots in red represent the results obtained when using \ac{sift}. The lack of variability within the boxplots illustrates a repeatability of the results across the samples, which gets accentuated when using \ac{sift}. The results show that the preferred labels which cover larger portion of the feature space achieve better results than the other classes. This is more clear for the intensity case since there are classes with no mode and therefore all the samples of this class are misclassified (see fig.~\ref{fig:sift_and_ingensity_MAP}). The sensitivity or \ac{tpr} allows to obtain a general sense of performance across all the labels. The \ac{tpr} value obtained for the intensity case is $16.6\%$, whereas for the \ac{sift} case is $18.8\%$ which demonstrate that both feature spaces are equally valid.
 
-\begin{figure}[Htbp]
-\centering
-\subfloat[]{\includegraphics[width=\textwidth]{untitled}}
-\caption{}
-\label{fig:mapQuantitativeResults}
-\end{figure}
+%\begin{figure}[Htbp]
+%\centering
+%\subfloat[]{\includegraphics[width=\textwidth]{untitled}}
+%\caption{}
+%\label{fig:mapQuantitativeResults}
+%\end{figure}
 
 
 \begin{figure}[Htbp]
@@ -362,13 +381,13 @@ Texture is an area property related to spatial repetition of structures, similar
 In this proposal, the words or features representing the images are \ac{sift} descriptors. In order to generate the dictionary that generates the \ac{bof} descriptor, the space of \ac{sift} descriptors is clustered in order to produce a hard quantification of this space. In this case, a k-means procedure with $k=36$ is used to generate the dictionary. To generate the \ac{bof}-\ac{sift} feature, all the \ac{sift} descriptors are substituted for the closest \ac{sift} descriptor in the dictionary. Finally the texture description from a particular area is expressed as the keywords' occurrence in this area. The descriptor is normalized so that the sum of all the occurrences is 1. 
 Figure~\ref{fig:bow} illustrates the \ac{bof}-\ac{sift} feature for some example areas. %In the figure there is a dictionary example 
 
-\begin{figure}[Htbp]
-\centering
-\subfloat[]{\includegraphics[width=.2\textwidth]{fakeDict2Dmap}}~
-\subfloat[]{\includegraphics[width=.20\textwidth,]{fakeDict.png}}
-\caption{Two views of a generated codebook (dictionary) example. (a) Clusters mapped in the 2D projected \ac{sift} space. (b) Simple concatenation of the codebook for further usage visualizing super pixel's signature.}
-\label{fig:dictionaryConstruction}
-\end{figure}
+%\begin{figure}[Htbp]
+%\centering
+%\subfloat[]{\includegraphics[width=.2\textwidth]{fakeDict2Dmap}}~
+%\subfloat[]{\includegraphics[width=.20\textwidth,]{fakeDict.png}}
+%\caption{Two views of a generated codebook (dictionary) example. (a) Clusters mapped in the 2D projected \ac{sift} space. (b) Simple concatenation of the codebook for further usage visualizing super pixel's signature.}
+%\label{fig:dictionaryConstruction}
+%\end{figure}
 
 
 %The keywords are a hard quantification of the feature space as it can be seen in figure~\ref{fig:dictionary}. Although any quantification procedure can be used, in out case a set of 36 keywords from a k-means clustering process is used (see fig.~\ref{fig:dictionary}c). Once the set of keywords determined, all the features are associated to their nearest keyword as can be observed in fig.\,\ref{fig:dictionary}. Finally the texture description from a particular area is expressed as the keywords' occurrence in this area. This process is illustrated in figure~\ref{fig:bow}.
@@ -403,17 +422,17 @@ inner sep=0,
 }}
 \begin{tiny}
 
-\draw[] (imgNode.north east) +(5pt,0) node[nameSt, label=below:Dictionary] (dictionary) {\includegraphics[width=.10\textwidth,]{fakeDict.png}} ;
-\draw[] (dictionary.north east) +(5pt,0) node[nameSt, label=below:(1)] (BoFi) {\includegraphics[width=.10\textwidth,]{BoF/desc01.png}} ;
-\draw[] (BoFi.north east) +(5pt,0) node[nameSt, label=below:(2)] (BoFii) {\includegraphics[width=.10\textwidth,]{BoF/desc02.png}} ;
+\draw[] (imgNode.north east) +(5pt,0) node[nameSt, label=below:Dictionary] (dictionary) {\includegraphics[width=.10\textwidth,]{dictionary/01.png}} ;
+\draw[] (dictionary.north east) +(5pt,0) node[nameSt, label=below:(1)] (BoFi) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/127.png}} ;
+\draw[] (BoFi.north east) +(5pt,0) node[nameSt, label=below:(2)] (BoFii) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/037.png}} ;
 
-\node[nameSt, below=of dictionary, label=below:(3)] (BoFiii) {\includegraphics[width=.10\textwidth,]{BoF/desc03.png}} ;
-\node[nameSt, below=of BoFi, label=below:(4)] (BoFiv) {\includegraphics[width=.10\textwidth,]{BoF/desc04.png}} ;
-\node[nameSt, below=of BoFii, label=below:(5)] (BoFv) {\includegraphics[width=.10\textwidth,]{BoF/desc05.png}} ;
+\node[nameSt, below=of dictionary, label=below:(3)] (BoFiii) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/054.png}} ;
+\node[nameSt, below=of BoFi, label=below:(4)] (BoFiv) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/118.png}} ;
+\node[nameSt, below=of BoFii, label=below:(5)] (BoFv) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/160.png}} ;
 
-\node[nameSt, below=of BoFiii, label=below:(6)] (BoFvi) {\includegraphics[width=.10\textwidth,]{BoF/desc06.png}} ;
-\node[nameSt, below=of BoFiv, label=below:(7)] (BoFvii) {\includegraphics[width=.10\textwidth,]{BoF/desc07.png}} ;
-\node[nameSt, below=of BoFv, label=below:(8)] (BoFviii) {\includegraphics[width=.10\textwidth,]{BoF/desc08.png}} ;
+\node[nameSt, below=of BoFiii, label=below:(6)] (BoFvi) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/061.png}} ;
+\node[nameSt, below=of BoFiv, label=below:(7)] (BoFvii) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/077.png}} ;
+\node[nameSt, below=of BoFv, label=below:(8)] (BoFviii) {\includegraphics[width=.10\textwidth,]{dictionary/01Signatures/043.png}} ;
 
 \end{tiny}
 
@@ -425,14 +444,21 @@ inner sep=0,
 \end{figure}
 
 
-\section{Quantitative experiment}
+\subsection{Quantitative experiment}
 In order to assess the usage of \ac{sift} texture, the images are divided into superpixels, features are extracted to describe the superpixels and supervised \ac{ml} procedure using \ac{svm} is used to infer the labeling of the superpixel. Incorporating \ac{bof} of \ac{sift} descriptors in order to describe the superpixels improve the results of the labeling process for our preliminary experiments, however a more thorough study will be included in the final version of the document.
 
-\section{Conclusion}
-Experiments show that \ac{sift} is a worth candidate to incorporate in segmentation procedures, tissue charecterization and... 
+sift $29\pm3.6\%$
+intensity $33.5\pm2.3\%$
+
+\section{Conclusion} 
+The present study was designed to explore the usage of \ac{sift} feature space as a texture for characterizing the different tissues present in a breast \ac{us} image. During the study, \ac{sift} information have been used both as a low-level texture descriptor and encoded within a high-level texture descriptor using \ac{bof}. When comparing the performance of using the \ac{sift} space with the intensity to characterize tissues both spaces reach similar results. 
+
+One of the limitations of the study here presented is that in order to get a graphical representation of the \ac{sift} space, the 128 dimensions have been reduced to two compromising its performance. 
+
+The fact that despite all this limitations, \ac{sift} and intensity spaces, still produce similar results encourage further studies on using \ac{sift}.
 
 
-\newpage
+%\newpage
 %\bibliographystyle{splncs}
 \bibliographystyle{plain}
 \bibliography{bibliografiaNew}
