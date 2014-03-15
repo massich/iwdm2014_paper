@@ -1,0 +1,10 @@
+further work:
+
+- clustering the 128 space, then project the clustered data. Would they be really different than cluster them on the 2D space? If it is really different it means that manifold learning is needed
+
+- Problems of the balancing the unbalanced set
+
+- using k-means in intensity it worked preety good. At which k you loose a good visual interpretation of the images?
+
+
+
